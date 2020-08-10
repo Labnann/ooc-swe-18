@@ -1,10 +1,14 @@
 package _00_mohayemin.tictactoe_testing;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class GamePanel extends JPanel {
     private JButton[][] buttons;
+    GameState gameState = new GameState();
     private JLabel statusBar;
 
     public GamePanel(JLabel statusBar) {
@@ -16,7 +20,8 @@ public class GamePanel extends JPanel {
         setPreferredSize(new Dimension(300, 300));
         InitContent();
     }
-
+// 1 2
+//
     private void InitContent() {
         buttons = new JButton[3][3];
         for (int r = 0; r < 3; r++) {
@@ -30,40 +35,53 @@ public class GamePanel extends JPanel {
         JButton button = new JButton();
         button.addActionListener(e -> {
             button.setText("x");
-            if (isWon()) {
+            gameState.setPlayersMove(row, col);
+            if (gameState.isPlayerWon()) {
                 statusBar.setText("WIN!");
             }
         });
         add(button);
         buttons[row][col] = button;
     }
+}
 
-    private boolean isWon() {
+class GameState {
+    String[][] moves = new String[3][3];
+
+    void setPlayersMove(int row, int col) {
+        moves[row][col] = "x";
+    }
+
+    void setComputersMove(int row, int col) {
+        moves[row][col] = "0";
+    }
+
+    public boolean isPlayerWon(){
         for (int r = 0; r < 3; r++) {
-            if (buttons[r][0].getText() == "x" &&
-                    buttons[r][1].getText() == "x" &&
-                    buttons[r][2].getText() == "x") {
+            if (moves[r][0] == "x" &&
+                    moves[r][1]== "x" &&
+                    moves[r][2] == "x") {
                 return true;
             }
         }
 
         for (int c = 0; c < 3; c++) {
-            if (buttons[0][c].getText() == "x" &&
-                    buttons[1][c].getText() == "x" &&
-                    buttons[2][c].getText() == "x") {
+            if (moves[0][c] == "x" &&
+                    moves[1][c] == "x" &&
+                    moves[2][c] == "x") {
                 return true;
             }
         }
 
-        if (buttons[0][0].getText() == "x" &&
-                buttons[1][1].getText() == "x" &&
-                buttons[2][2].getText() == "x") {
+        if (moves[0][0] == "x" &&
+                moves[1][1] == "x" &&
+                moves[2][2] == "x") {
             return true;
         }
 
-        if (buttons[0][2].getText() == "x" &&
-                buttons[1][1].getText() == "x" &&
-                buttons[2][0].getText() == "x") {
+        if (moves[0][2] == "x" &&
+                moves[1][1] == "x" &&
+                moves[2][0] == "x") {
             return true;
         }
 
@@ -71,3 +89,22 @@ public class GamePanel extends JPanel {
     }
 }
 
+class GameStateTest {
+    @Test
+    void virticalWin() {
+        GameState gameState = new GameState();
+        gameState.setPlayersMove(0, 0);
+        gameState.setComputersMove(0, 1);
+        gameState.setPlayersMove(1, 0);
+        gameState.setComputersMove(0, 2);
+        gameState.setPlayersMove(2, 0);
+
+        boolean won = gameState.isPlayerWon();
+        Assertions.assertTrue(won);
+        /*
+        x00
+        x--
+        x--
+         */
+    }
+}
